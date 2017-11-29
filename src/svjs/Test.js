@@ -9,12 +9,13 @@ export class Test {
     constructor() {
         document.head.innerHTML = "<style type='text/css'>body { font-family: sans-serif; background-color: #f2f2f2; color: #333 }</style>";
         Test.appendHtml("<h1>" + this.constructor.name + "</h1>");
+        console.log("# " + this.constructor.name)
         // find out test functions
         const functionNames = Object.getOwnPropertyNames(this.constructor.prototype);
         functionNames.forEach((functionName) => {
             let failed = false;
             if (functionName.substr(0, 4) === "test") {
-                console.log(functionName);
+                console.log("## " + functionName);
                 Test.appendHtml(functionName);
                 try {
                     this[functionName]();
