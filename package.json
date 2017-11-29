@@ -1,0 +1,22 @@
+{
+  "name": "svjs-test",
+  "version": "1.0.4",
+  "description": "Allows unit testing of ES6 modules without additional dependencies right in your browser.",
+  "main": "src/svjs/Test.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shaack/svjs-test.git"
+  },
+  "author": "Stefan Haack (http://shaack.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/shaack/svjs-test/issues"
+  },
+  "homepage": "https://github.com/shaack/svjs-test#readme"
+}
