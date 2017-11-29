@@ -16,8 +16,8 @@ Demo: [http://shaack.com/projekte/svjs-test/test/](http://shaack.com/projekte/sv
 </head>
 <body>
 <script type="module">
-    import {TestDemo} from "./TestDemo.js"
-    TestDemo.run();
+    import {TestMyModule} from "./TestMyModule.js"
+    TestMyModule.run();
 </script>
 </body>
 </html>
