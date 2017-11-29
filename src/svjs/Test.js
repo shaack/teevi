@@ -3,11 +3,7 @@
  * Date: 29.11.2017
  */
 
-export function assert(condition, message = "Assertion failed") {
-    if (!condition) {
-        throw new Error(message);
-    }
-}
+const DEFAULT_MESSAGE = "Assertion failed";
 
 export class Test {
     constructor() {
@@ -34,6 +30,18 @@ export class Test {
                 Test.appendHtml("<br/>");
             }
         });
+    }
+
+    static assert(condition, message = DEFAULT_MESSAGE) {
+        if (!condition) {
+            throw new Error(message);
+        }
+    }
+
+    static assertEquals(expected, value, message = DEFAULT_MESSAGE) {
+        if (expected !== value) {
+            throw new Error(message + " – expected: " + expected + ", result: " + value);
+        }
     }
 
     static appendHtml(html) {

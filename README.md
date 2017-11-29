@@ -25,16 +25,16 @@ Demo: [http://shaack.com/projekte/svjs-test/test/](http://shaack.com/projekte/sv
 - Create `TestMyModule.js`:
 
 ```
-import {assert, Test} from "../src/svjs/Test.js"
+import {Test} from "../src/svjs/Test.js"
 
 export class TestMyModule.js extends Test {
 
-    testWhatisThree() {
-        assert(3 === 1 + 2);
+    testThisWillNotFail() {
+        Test.assert(true);
     }
 
     testThisWillFail() {
-        assert(false);
+        Test.assertEquals(42, 1 + 2);
     }
 
 }
