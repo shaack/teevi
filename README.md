@@ -40,10 +40,16 @@ export class TestMyModule.js extends Test {
 }
 ```
 
-Just extend `Test` functions named `test...` will be executed automaticly, when you call 
+Just extend `Test`. 
+
+Functions named `test...` will be executed automaticly, when you call 
 `test/index.html` in your Browser.
 
+## Result
 
+The result will look like this:
+
+![Test Result](http://shaack.com/projekte/assets/img/svjs_test.png)
 
 ## Why this one
 
