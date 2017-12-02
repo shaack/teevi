@@ -7,8 +7,9 @@
 <body>
 <script type="module">
     import {TestDemo} from "./TestDemo.js"
-    TestDemo.run("testThisWillNotFail"); // only one test
-    TestDemo.run(); // all tests in testclass
+
+    TestDemo.run({functionName: "testThisWillNotFail"}); // run only one test
+    TestDemo.run(); // run all tests in testclass
 </script>
 </body>
 </html>

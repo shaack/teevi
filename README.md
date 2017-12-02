@@ -5,7 +5,7 @@ Demo: [http://shaack.com/projekte/svjs-test/test/](http://shaack.com/projekte/sv
 
 ## Works like this
 
-- Create `test/index.html`:
+1. Create a `test/index.html`:
 
 ```
 <!DOCTYPE html>
@@ -22,7 +22,9 @@ Demo: [http://shaack.com/projekte/svjs-test/test/](http://shaack.com/projekte/sv
 </body>
 </html>
 ```
-- Create `TestMyModule.js`:
+2. Create test classes extending `Test`, in this case `TestMyModule.js`. 
+Functions named `test[…]` will be executed automatically, when you call 
+`test/index.html` in your Browser.
 
 ```
 import {Test} from "../src/svjs/Test.js"
@@ -40,17 +42,25 @@ export class TestMyModule.js extends Test {
 }
 ```
 
-Just extend `Test`. 
-
-Functions named `test...` will be executed automaticly, when you call 
-`test/index.html` in your Browser.
-
 ## Result
 
 The result will look like this:
 
 ![Test Result](http://shaack.com/projekte/assets/img/svjs_test.png)
 
+## Configuration
+```
+const config = {
+    htmlOutput: true, // enable HTML output
+    consoleOutput: true, // enable output via console
+    functionName: null /* 
+        set as String for running one test function,
+        as array for multiple specific functions in the test class,
+        null for all test[…] functions in the test class 
+        */ 
+};
+TestMyModule.run(config);
+```
 ## Why this one
 
 You can test vanilla ES6 right in you browser, without Babel or other external dependencies. 
