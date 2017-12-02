@@ -28,7 +28,6 @@ export class Test {
         if (this.config.functionName) {
             if (Array.isArray(this.config.functionName)) {
                 functionNames = this.config.functionName;
-                console.log("IS ARRAY!", functionNames);
             } else {
                 functionNames.push(this.config.functionName);
             }
@@ -38,21 +37,27 @@ export class Test {
 
         functionNames.forEach((functionName) => {
             let failed = false;
+            const testList = document.createElement("div");
+            testList.setAttribute("style", STYLE);
             if (functionName.substr(0, 4) === "test") {
-                console.log("## " + functionName);
-                Test.appendHtml("<span style='font-family: sans-serif'>" + functionName + "</span>");
+                if (this.config.consoleOutput) {
+                    console.log("## " + functionName);
+                }
+                testList.innerHTML += functionName;
                 try {
                     this[functionName]();
                 } catch (e) {
-                    Test.appendHtml(" =&gt; <span style='color: #990000; font-family: sans-serif;'>Fail</span>");
-                    Test.appendHtml("<pre style='color: #990000'>" + e.stack + "</pre>");
+                    testList.innerHTML += " =&gt; <span style='color: #990000;'>Fail</span>";
+                    testList.innerHTML += "<pre style='color: #990000'>" + e.stack + "</pre>";
                     console.error(e);
                     failed = true;
                 }
                 if (!failed) {
-                    Test.appendHtml(" =&gt; <span style='color: #009900; font-family: sans-serif;'>OK</span>");
+                    testList.innerHTML += " =&gt; <span style='color: #009900;'>OK</span>";
                 }
-                Test.appendHtml("<br/>");
+                if(this.config.htmlOutput) {
+                    document.body.appendChild(testList);
+                }
             }
         });
     }
@@ -67,10 +72,6 @@ export class Test {
         if (expected !== value) {
             throw new Error(message + " – expected: " + expected + ", result: " + value);
         }
-    }
-
-    static appendHtml(html) {
-        document.body.innerHTML = document.body.innerHTML + html;
     }
 
     static run(functionNameToTest = null) {
