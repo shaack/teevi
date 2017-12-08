@@ -48,7 +48,7 @@ export class Test {
                     this[functionName]();
                 } catch (e) {
                     testList.innerHTML += " =&gt; <span style='color: #990000;'>Fail</span>";
-                    testList.innerHTML += "<pre style='color: #990000'>" + e.stack + "</pre>";
+                    testList.innerHTML += "<pre style='color: #990000; background-color: #f2f2f2; padding: 5px'>" + e.stack + "</pre>";
                     console.error(e);
                     failed = true;
                 }
