@@ -11,7 +11,7 @@ export class Test {
         this.config = {
             htmlOutput: true,
             consoleOutput: true,
-            functionName: null
+            tests: null
         };
         Object.assign(this.config, config);
         if (this.config.htmlOutput) {
@@ -25,11 +25,11 @@ export class Test {
         }
         let functionNames = [];
         // find out test functions
-        if (this.config.functionName) {
-            if (Array.isArray(this.config.functionName)) {
-                functionNames = this.config.functionName;
+        if (this.config.tests) {
+            if (Array.isArray(this.config.tests)) {
+                functionNames = this.config.tests;
             } else {
-                functionNames.push(this.config.functionName);
+                functionNames.push(this.config.tests);
             }
         } else {
             functionNames = Object.getOwnPropertyNames(this.constructor.prototype);
