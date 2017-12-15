@@ -15,7 +15,7 @@ export class Test {
         };
         Object.assign(this.config, config);
         if (this.config.htmlOutput) {
-            const testHeadline = document.createElement("h1");
+            const testHeadline = document.createElement("h2");
             testHeadline.setAttribute("style", STYLE);
             testHeadline.innerText = this.constructor.name;
             document.body.appendChild(testHeadline);
