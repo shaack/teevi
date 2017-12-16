@@ -6,6 +6,15 @@
 const DEFAULT_MESSAGE = "Assertion failed";
 const STYLE = "font-family: sans-serif";
 
+class TestError extends Error {
+    constructor(message) {
+        super(message);
+        this.stack = this.stack.split("\n");
+        this.stack.splice(1, 1);
+        this.stack = this.stack.join("\n");
+    }
+}
+
 export class Test {
     constructor(config) {
         this.config = {
@@ -49,7 +58,7 @@ export class Test {
                 } catch (e) {
                     testList.innerHTML += " =&gt; <span style='color: #990000;'>Fail</span>";
                     testList.innerHTML += "<pre style='color: #990000; background-color: #f2f2f2; padding: 5px'>" + e.stack + "</pre>";
-                    console.error(e);
+                    console.error(e.stack);
                     failed = true;
                 }
                 if (!failed) {
@@ -64,13 +73,13 @@ export class Test {
 
     static assert(condition, message = DEFAULT_MESSAGE) {
         if (!condition) {
-            throw new Error(message);
+            throw new TestError(message);
         }
     }
 
     static assertEquals(expected, value, message = DEFAULT_MESSAGE) {
         if (expected !== value) {
-            throw new Error(message + " – expected: " + expected + ", result: " + value);
+            throw new TestError(message + " – expected: " + expected + ", result: " + value);
         }
     }
 
