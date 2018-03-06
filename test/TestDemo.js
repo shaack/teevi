@@ -3,7 +3,7 @@
  * Date: 29.11.2017
  */
 
-import {Test} from "../src/svjs/Test.js"
+import {Test} from "../src/svjs-test/Test.js"
 
 export class TestDemo extends Test {
 
