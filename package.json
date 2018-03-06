@@ -10,7 +10,7 @@
     "ECMAScript 6",
     "svjs"
   ],
-  "main": "src/svjs/Test.js",
+  "main": "src/svjs-test/Test.js",
   "directories": {
     "test": "test"
   },
