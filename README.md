@@ -1,5 +1,6 @@
 # svjs-test
-Allows unit testing of ES6 modules without additional dependencies right in your browser.
+
+Allows unit testing of ES6 modules without additional dependencies, right in your browser.
 
 Demo: [http://shaack.com/projekte/svjs-test/test/](http://shaack.com/projekte/svjs-test/test/)
 
@@ -7,7 +8,7 @@ Demo: [http://shaack.com/projekte/svjs-test/test/](http://shaack.com/projekte/sv
 
 1. Create a `test/index.html`:
 
-```
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,11 +23,12 @@ Demo: [http://shaack.com/projekte/svjs-test/test/](http://shaack.com/projekte/sv
 </body>
 </html>
 ```
+
 2. Create test classes extending `Test`, in this case `TestMyModule.js`. 
 Functions named `test[…]` will be executed automatically, when you call 
 `test/index.html` in your Browser.
 
-```
+```javascript
 import {Test} from "../src/svjs/Test.js"
 
 export class TestMyModule.js extends Test {
@@ -49,7 +51,8 @@ The result will look like this:
 ![Test Result](http://shaack.com/projekte/assets/img/svjs_test.png)
 
 ## Configuration
-```
+
+```javascript
 const config = {
     htmlOutput: true, // enable HTML output
     consoleOutput: true, // enable output via console
@@ -61,6 +64,4 @@ const config = {
 };
 TestMyModule.run(config);
 ```
-## Why this one
 
-You can test vanilla ES6 right in you browser, without Babel or other external dependencies. 
