@@ -18,7 +18,7 @@ Demo: [http://shaack.com/projekte/svjs-test/test/](http://shaack.com/projekte/sv
 <body>
 <script type="module">
     import {TestMyModule} from "./TestMyModule.js"
-    TestMyModule.run();
+    TestMyModule.run()
 </script>
 </body>
 </html>
@@ -31,14 +31,14 @@ Functions named `test[…]` will be executed automatically, when you call
 ```javascript
 import {Test} from "../src/svjs/Test.js"
 
-export class TestMyModule.js extends Test {
+export class TestMyModule extends Test {
 
     testThisWillNotFail() {
-        Test.assert(true);
+        Test.assert(true)
     }
 
     testThisWillFail() {
-        Test.assertEquals(42, 1 + 2);
+        Test.assertEquals(42, 1 + 2)
     }
 
 }
@@ -61,7 +61,7 @@ const config = {
         as array for multiple specific functions in the test class,
         null for all test[…] functions in the test class 
         */ 
-};
-TestMyModule.run(config);
+}
+TestMyModule.run(config)
 ```
 
