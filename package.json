@@ -1,6 +1,6 @@
 {
   "name": "svjs-test",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "description": "Allows unit testing of ES6 modules without additional dependencies right in your browser.",
   "keywords": [
     "test",
