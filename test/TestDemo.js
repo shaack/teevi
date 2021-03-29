@@ -4,17 +4,13 @@
  * License: MIT, see file 'LICENSE'
  */
 
-import {Test} from "../src/utiny/Test.js"
-import {Assert} from "../src/utiny/Assert.js";
+import {describe, it, assert} from "../src/utiny.js";
 
-export class TestDemo extends Test {
-
-    testThisWillNotFail() {
-        Assert.true(2 * 2, 4)
-    }
-
-    testThisWillFail() {
-        Assert.equals(4 + 2, 42)
-    }
-
-}
+describe("utiny", () => {
+    it("will not fail", () => {
+        assert.true(2 * 2 === 4)
+    })
+    it("will fail", () => {
+        assert.equals(4 + 2, 42)
+    })
+})

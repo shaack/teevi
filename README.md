@@ -20,52 +20,24 @@ Demo: [http://shaack.com/projekte/utiny/test/](http://shaack.com/projekte/utiny/
 </head>
 <body>
 <script type="module">
-    import {TestMyModule} from "./TestMyModule.js"
-    TestMyModule.run()
+    import "./TestMyModule.js"
 </script>
 </body>
 </html>
 ```
 
-2. Create test classes extending `Test`, in this case `TestMyModule.js`. 
-Functions named `test[…]` will be executed automatically, when you call 
-`test/index.html` in your Browser.
+2. Create the test module `TestMyModule.js`.
 
 ```javascript
-import {Test} from "../src/utiny/Test.js"
-import {Assert} from "../src/utiny/Assert.js"
+import {describe, it, assert} from "../src/utiny.js";
 
-export class TestMyModule extends Test {
-
-    testThisWillNotFail() {
-        Assert.true(2 * 2, 4)
-    }
-
-    testThisWillFail() {
-        Assert.equals(4 + 2, 42)
-    }
-
-}
-```
-
-## Result
-
-The result will look like this:
-
-![Test Result](http://shaack.com/projekte/assets/img/svjs_test.png)
-
-## Configuration
-
-```javascript
-const props = {
-    htmlOutput: true, // enable HTML output
-    consoleOutput: true, // enable output via console
-    onyl: undefined /* 
-        set as String to run one specific test only,
-        set as array to run multiple specific tests in the test class,
-        leave as undefined to run test[…] functions in the test class 
-        */ 
-}
-TestMyModule.run(props)
+describe("utiny", () => {
+    it("will not fail", () => {
+        assert.true(2 * 2 === 4)
+    })
+    it("will fail", () => {
+        assert.equals(4 + 2, 42)
+    })
+})
 ```
 
