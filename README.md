@@ -1,7 +1,7 @@
 # utiny
 
 Tired of installing 25 dependencies, just to run unit tests? utiny is
-the essence of unit testing JavaScript modules.
+the essence of unit testing for JavaScript modules.
 
 It allows unit testing of ES6 modules without additional dependencies, right in your browser.
 
