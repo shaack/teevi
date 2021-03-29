@@ -10,11 +10,11 @@ import {Assert} from "../src/utiny/Assert.js";
 export class TestDemo extends Test {
 
     testThisWillNotFail() {
-        Assert.true(true);
+        Assert.true(2 * 2, 4)
     }
 
     testThisWillFail() {
-        Assert.equals(1 + 2, 42);
+        Assert.equals(4 + 2, 42)
     }
 
 }

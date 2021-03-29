@@ -9,13 +9,19 @@ const DEFAULT_MESSAGE = "Assertion failed"
 class TestError extends Error {
     constructor(message) {
         super(message)
-        this.stack = this.stack.split("\n")
-        this.stack.splice(1, 1)
-        this.stack = this.stack.join("\n")
+        if(this.stack && Array.isArray(this.stack)) {
+            this.stack = this.stack.split("\n")
+            this.stack.splice(1, 1)
+            this.stack = this.stack.join("\n")
+        }
     }
 }
 
 export class Assert {
+
+    static fail(message = DEFAULT_MESSAGE) {
+        throw new TestError(message)
+    }
 
     static true(condition, message = DEFAULT_MESSAGE) {
         if (!condition) {

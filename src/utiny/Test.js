@@ -25,7 +25,7 @@ export class Test {
             console.log("# " + this.constructor.name)
         }
         let functionNames = []
-        // find out test functions
+        // find specific test functions
         if (this.props.only) {
             if (Array.isArray(this.props.only)) {
                 functionNames = this.props.only
@@ -63,7 +63,7 @@ export class Test {
         })
     }
 
-    static run(functionNameToTest = undefined) {
-        new this(functionNameToTest)
+    static run(props = undefined) {
+        new this(props)
     }
 }

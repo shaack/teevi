@@ -33,15 +33,16 @@ Functions named `test[…]` will be executed automatically, when you call
 
 ```javascript
 import {Test} from "../src/utiny/Test.js"
+import {Assert} from "../src/utiny/Assert.js"
 
 export class TestMyModule extends Test {
 
     testThisWillNotFail() {
-        Test.assert(true)
+        Assert.true(2 * 2, 4)
     }
 
     testThisWillFail() {
-        Test.assertEquals(42, 1 + 2)
+        Assert.equals(4 + 2, 42)
     }
 
 }
