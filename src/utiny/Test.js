@@ -1,46 +1,36 @@
 /**
  * Author and copyright: Stefan Haack (https://shaack.com)
- * Repository: https://github.com/shaack/svjs-test
+ * Repository: https://github.com/shaack/utiny
  * License: MIT, see file 'LICENSE'
  */
 
-
-const DEFAULT_MESSAGE = "Assertion failed"
 const STYLE = "font-family: sans-serif"
 
-class TestError extends Error {
-    constructor(message) {
-        super(message)
-        this.stack = this.stack.split("\n")
-        this.stack.splice(1, 1)
-        this.stack = this.stack.join("\n")
-    }
-}
-
 export class Test {
-    constructor(config) {
-        this.config = {
+
+    constructor(props) {
+        this.props = {
             htmlOutput: true,
             consoleOutput: true,
-            tests: null
+            only: undefined
         }
-        Object.assign(this.config, config)
-        if (this.config.htmlOutput) {
+        Object.assign(this.props, props)
+        if (this.props.htmlOutput) {
             const testHeadline = document.createElement("h2")
             testHeadline.setAttribute("style", STYLE)
             testHeadline.innerText = this.constructor.name
             document.body.appendChild(testHeadline)
         }
-        if (this.config.consoleOutput) {
+        if (this.props.consoleOutput) {
             console.log("# " + this.constructor.name)
         }
         let functionNames = []
         // find out test functions
-        if (this.config.tests) {
-            if (Array.isArray(this.config.tests)) {
-                functionNames = this.config.tests
+        if (this.props.only) {
+            if (Array.isArray(this.props.only)) {
+                functionNames = this.props.only
             } else {
-                functionNames.push(this.config.tests)
+                functionNames.push(this.props.only)
             }
         } else {
             functionNames = Object.getOwnPropertyNames(this.constructor.prototype)
@@ -51,7 +41,7 @@ export class Test {
             const testList = document.createElement("div")
             testList.setAttribute("style", STYLE)
             if (functionName.substr(0, 4) === "test") {
-                if (this.config.consoleOutput) {
+                if (this.props.consoleOutput) {
                     console.log("## " + functionName)
                 }
                 testList.innerHTML += functionName
@@ -66,26 +56,14 @@ export class Test {
                 if (!failed) {
                     testList.innerHTML += " =&gt; <span style='color: #009900;'>OK</span>"
                 }
-                if (this.config.htmlOutput) {
+                if (this.props.htmlOutput) {
                     document.body.appendChild(testList)
                 }
             }
         })
     }
 
-    static assert(condition, message = DEFAULT_MESSAGE) {
-        if (!condition) {
-            throw new TestError(message)
-        }
-    }
-
-    static assertEquals(expected, value, message = DEFAULT_MESSAGE) {
-        if (expected !== value) {
-            throw new TestError(message + " – expected: " + expected + ", result: " + value)
-        }
-    }
-
-    static run(functionNameToTest = null) {
+    static run(functionNameToTest = undefined) {
         new this(functionNameToTest)
     }
 }

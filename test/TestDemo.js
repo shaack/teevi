@@ -4,16 +4,17 @@
  * License: MIT, see file 'LICENSE'
  */
 
-import {Test} from "../src/svjs-test/Test.js"
+import {Test} from "../src/utiny/Test.js"
+import {Assert} from "../src/utiny/Assert.js";
 
 export class TestDemo extends Test {
 
     testThisWillNotFail() {
-        Test.assert(true);
+        Assert.true(true);
     }
 
     testThisWillFail() {
-        Test.assertEquals(42, 1 + 2);
+        Assert.equals(1 + 2, 42);
     }
 
 }

@@ -1,8 +1,11 @@
-# svjs-test
+# utiny
 
-Allows unit testing of ES6 modules without additional dependencies, right in your browser.
+Tired of installing 25 dependencies, just to run unit tests? utiny is
+the essence of unit testing in JavaScript.
 
-Demo: [http://shaack.com/projekte/svjs-test/test/](http://shaack.com/projekte/svjs-test/test/)
+It allows unit testing of ES6 modules without additional dependencies, right in your browser.
+
+Demo: [http://shaack.com/projekte/utiny/test/](http://shaack.com/projekte/utiny/test/)
 
 ## Works like this
 
@@ -29,7 +32,7 @@ Functions named `test[…]` will be executed automatically, when you call
 `test/index.html` in your Browser.
 
 ```javascript
-import {Test} from "../src/svjs/Test.js"
+import {Test} from "../src/utiny/Test.js"
 
 export class TestMyModule extends Test {
 
@@ -53,15 +56,15 @@ The result will look like this:
 ## Configuration
 
 ```javascript
-const config = {
+const props = {
     htmlOutput: true, // enable HTML output
     consoleOutput: true, // enable output via console
-    functionName: null /* 
-        set as String for running one test function,
-        as array for multiple specific functions in the test class,
-        null for all test[…] functions in the test class 
+    onyl: undefined /* 
+        set as String to run one specific test only,
+        set as array to run multiple specific tests in the test class,
+        leave as undefined to run test[…] functions in the test class 
         */ 
 }
-TestMyModule.run(config)
+TestMyModule.run(props)
 ```
 
