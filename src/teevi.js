@@ -78,7 +78,7 @@ export class assert {
 
     static equals(actual, expected, message = DEFAULT_MESSAGE) {
         if (expected !== actual) {
-            throw new TestError(message + " – expected: " + expected + ", result: " + actual)
+            throw new TestError(message + " - actual: " + actual + ", expected: " + expected)
         }
     }
 

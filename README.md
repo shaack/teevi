@@ -41,7 +41,7 @@ describe("Teevi test demo", () => {
 </html>
 ```
 
-![bootstrap-input-spinner](https://shaack.com/projekte/assets/img/teevi-test-demo.png)
+![bootstrap-input-spinner](https://shaack.com/projekte/assets/img/teevi-test-demo.png?v=1)
 
 ## it.only
 
