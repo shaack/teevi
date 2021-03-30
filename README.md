@@ -35,7 +35,9 @@ describe("Teevi test demo", () => {
 </head>
 <body>
 <script type="module">
+    import {teevi} from "./src/teevi.js"
     import "./TestMyModule.js"
+    teevi.run()
 </script>
 </body>
 </html>

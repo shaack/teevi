@@ -18,49 +18,58 @@ class TestError extends Error {
     }
 }
 
+export class teevi {
+    static run() {
+        run()
+    }
+}
+
+let testStack = []
 export function describe(object, tests) {
-    const testHeadline = document.createElement("h2")
-    testHeadline.setAttribute("style", STYLE)
-    testHeadline.innerText = object
-    document.body.appendChild(testHeadline)
-    console.log(object + ":")
+    testStack.push({describe: object})
     tests()
-    run()
 }
 
 let onlyMode = false
-let tests = []
 const it = function it(condition, testMethod) {
-    tests.push({condition: condition, testMethod: testMethod, only: false})
+    testStack.push({it: condition, testMethod: testMethod, only: false})
 }
 it.only = function it(condition, testMethod) {
-    tests.push({condition: condition, testMethod: testMethod, only: true})
+    testStack.push({it: condition, testMethod: testMethod, only: true})
     onlyMode = true
 }
 export {it}
 
 function run() {
-    for (const test of tests) {
-        if(onlyMode && !test.only) {
-            continue
+    for (const test of testStack) {
+        if(test.describe) {
+            const testHeadline = document.createElement("h2")
+            testHeadline.setAttribute("style", STYLE)
+            testHeadline.innerText = test.describe
+            document.body.appendChild(testHeadline)
+            console.log(test.describe + ":")
+        } else if(test.it) {
+            if (onlyMode && !test.only) {
+                continue
+            }
+            let failed = false
+            const testList = document.createElement("div")
+            testList.setAttribute("style", STYLE)
+            console.log("- " + test.it)
+            testList.innerHTML += test.it
+            try {
+                test.testMethod()
+            } catch (e) {
+                testList.innerHTML += " =&gt; <span style='color: #990000;'>fail</span>"
+                testList.innerHTML += "<pre style='color: #990000; background-color: #f2f2f2; padding: 5px'>" + e + "</pre>"
+                console.error(e)
+                failed = true
+            }
+            if (!failed) {
+                testList.innerHTML += " =&gt; <span style='color: #009900;'>ok</span>"
+            }
+            document.body.appendChild(testList)
         }
-        let failed = false
-        const testList = document.createElement("div")
-        testList.setAttribute("style", STYLE)
-        console.log("- " + test.condition)
-        testList.innerHTML += test.condition
-        try {
-            test.testMethod()
-        } catch (e) {
-            testList.innerHTML += " =&gt; <span style='color: #990000;'>fail</span>"
-            testList.innerHTML += "<pre style='color: #990000; background-color: #f2f2f2; padding: 5px'>" + e + "</pre>"
-            console.error(e)
-            failed = true
-        }
-        if (!failed) {
-            testList.innerHTML += " =&gt; <span style='color: #009900;'>ok</span>"
-        }
-        document.body.appendChild(testList)
     }
 }
 
