@@ -1,15 +1,30 @@
-# utiny
+# Teevi
 
-Tired of installing 25 dependencies, just to run unit tests? utiny is
+Tired of installing 25 dependencies, just to run unit tests? Teevi is
 the essence of unit testing for JavaScript modules.
 
 It allows unit testing of ES6 modules without additional dependencies, right in your browser.
 
-Demo: [http://shaack.com/projekte/utiny/test/](http://shaack.com/projekte/utiny/test/)
+Demo: [http://shaack.com/projekte/teevi/test/](http://shaack.com/projekte/teevi/test/)
 
-## Works like this
+## Usage
 
-1. Create a `test/index.html`:
+1. Create the test module `TestMyModule.js`
+
+```javascript
+import {describe, it, assert} from "../src/teevi.js";
+
+describe("Teevi test demo", () => {
+    it("will not fail", () => {
+        assert.true(2 * 2 === 4)
+    })
+    it("will fail", () => {
+        assert.equals(4 + 2, 42)
+    })
+})
+```
+
+2. Create a `test/index.html` to run the tests in your browser
 
 ```html
 <!DOCTYPE html>
@@ -26,18 +41,9 @@ Demo: [http://shaack.com/projekte/utiny/test/](http://shaack.com/projekte/utiny/
 </html>
 ```
 
-2. Create the test module `TestMyModule.js`.
+![bootstrap-input-spinner](https://shaack.com/projekte/assets/img/teevi-test-demo.png)
 
-```javascript
-import {describe, it, assert} from "../src/utiny.js";
+## it.only
 
-describe("utiny", () => {
-    it("will not fail", () => {
-        assert.true(2 * 2 === 4)
-    })
-    it("will fail", () => {
-        assert.equals(4 + 2, 42)
-    })
-})
-```
+Use `it.only(condition, testMethod)` to run only these tests in your test module. 
 

@@ -4,9 +4,9 @@
  * License: MIT, see file 'LICENSE'
  */
 
-import {describe, it, assert} from "../src/utiny.js";
+import {describe, it, assert} from "../src/teevi.js";
 
-describe("utiny", () => {
+describe("Teevi test demo", () => {
     it("will not fail", () => {
         assert.true(2 * 2 === 4)
     })

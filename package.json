@@ -1,5 +1,5 @@
 {
-  "name": "utiny",
+  "name": "teevi",
   "version": "2.1.1",
   "description": "Allows unit testing of ES6 modules without additional dependencies right in your browser.",
   "keywords": [
@@ -9,7 +9,7 @@
     "ES6",
     "ECMAScript 6"
   ],
-  "main": "src/utiny/Test.js",
+  "main": "src/teevi/Test.js",
   "directories": {
     "test": "test"
   },
