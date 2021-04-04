@@ -25,6 +25,7 @@ export class teevi {
 }
 
 let testStack = []
+
 export function describe(object, tests) {
     testStack.push({describe: object})
     tests()
@@ -42,13 +43,13 @@ export {it}
 
 function run() {
     for (const test of testStack) {
-        if(test.describe) {
+        if (test.describe) {
             const testHeadline = document.createElement("h2")
             testHeadline.setAttribute("style", STYLE)
             testHeadline.innerText = test.describe
             document.body.appendChild(testHeadline)
             console.log(test.describe + ":")
-        } else if(test.it) {
+        } else if (test.it) {
             if (onlyMode && !test.only) {
                 continue
             }
