@@ -59,7 +59,13 @@ function run() {
             console.log("- " + test.it)
             testList.innerHTML += test.it
             try {
-                test.testMethod()
+                const paramNames = getParamNames(test.testMethod)
+                if(paramNames.length > 0 && paramNames[0] === "done") {
+                    // todo using "done()"
+                }
+                test.testMethod(() => {
+                    console.log("done()")
+                })
             } catch (e) {
                 testList.innerHTML += " =&gt; <span style='color: #990000;'>fail</span>"
                 testList.innerHTML += "<pre style='color: #990000; background-color: #f2f2f2; padding: 5px'>" + e + "</pre>"
@@ -72,6 +78,17 @@ function run() {
             document.body.appendChild(testList)
         }
     }
+}
+
+const STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg
+const ARGUMENT_NAMES = /([^\s,]+)/g
+
+function getParamNames(func) {
+    const fnStr = func.toString().replace(STRIP_COMMENTS, '')
+    let result = fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(ARGUMENT_NAMES)
+    if (result === null)
+        result = []
+    return result
 }
 
 export class assert {
