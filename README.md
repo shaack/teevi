@@ -1,15 +1,15 @@
 # Teevi
 
 Tired of installing 25 dependencies, just to run unit tests? Teevi is
-the essence of unit testing for JavaScript modules.
+the essence of unit testing in JavaScript.
 
-It allows unit testing of ES6 modules without additional dependencies, right in your browser.
+It allows unit testing of JavaScript without additional dependencies, right in your browser.
 
 Demo: [http://shaack.com/projekte/teevi/test/](http://shaack.com/projekte/teevi/test/)
 
 ## Usage
 
-1. Create the test module `TestMyModule.js`
+1. Create the test script `MyTest.js`
 
 ```javascript
 import {describe, it, assert} from "../src/teevi.js";
@@ -36,7 +36,7 @@ describe("Teevi test demo", () => {
 <body>
 <script type="module">
     import {teevi} from "./src/teevi.js"
-    import "./TestMyModule.js"
+    import "./MyTest.js"
     teevi.run()
 </script>
 </body>
