@@ -13,10 +13,12 @@ describe("Teevi test demo", () => {
     it("will fail", () => {
         assert.equals(4 + 2, 42)
     })
+    /*
     it("should test async", (done) => {
         setTimeout(() => {
             assert.true(true)
             done()
         }, 1000)
     })
+    */
 })
