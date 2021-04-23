@@ -4,6 +4,7 @@ Tired of installing 25 dependencies, just to run unit tests? Teevi is
 the essence of unit testing in JavaScript.
 
 It allows unit testing of JavaScript without additional dependencies, right in your browser.
+Besides, Teevi has almost the same syntax as Mocha with Chai but is a hundred times smaller.
 
 Demo: [http://shaack.com/projekte/teevi/test/](http://shaack.com/projekte/teevi/test/)
 

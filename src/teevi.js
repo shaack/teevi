@@ -62,10 +62,11 @@ function run() {
                 const paramNames = getParamNames(test.testMethod)
                 if(paramNames.length > 0 && paramNames[0] === "done") {
                     // todo using "done()"
+                    test.testMethod(() => {
+                        console.log("done()")
+                    })
                 }
-                test.testMethod(() => {
-                    console.log("done()")
-                })
+                test.testMethod()
             } catch (e) {
                 testList.innerHTML += " =&gt; <span style='color: #990000;'>fail</span>"
                 testList.innerHTML += "<pre style='color: #990000; background-color: #f2f2f2; padding: 5px'>" + e + "</pre>"
