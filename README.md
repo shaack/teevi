@@ -1,6 +1,6 @@
 # Teevi
 
-Tired of installing 25 dependencies, just to run unit tests? Teevi is
+Tired of installing 100 dependencies, just to run unit tests? Teevi is
 the essence of unit testing in JavaScript.
 
 It allows unit testing of JavaScript without additional dependencies, right in your browser.
