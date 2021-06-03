@@ -104,10 +104,29 @@ export class assert {
         }
     }
 
+    static false(condition, message = DEFAULT_MESSAGE) {
+        if (!!condition) {
+            throw new TestError(message)
+        }
+    }
+
+    /** @deprecated */
     static equals(actual, expected, message = DEFAULT_MESSAGE) {
+        console.warn("`assert.equals` is deprecated, use `assert.equal`")
+        this.equal(actual, expected, message)
+    }
+
+    static equal(actual, expected, message = DEFAULT_MESSAGE) {
         if (expected !== actual) {
             throw new TestError(message + " - actual: " + actual + ", expected: " + expected)
         }
     }
+
+    static notEqual(actual, expected, message = DEFAULT_MESSAGE) {
+        if (expected === actual) {
+            throw new TestError(message + " - actual: " + actual + ", expected: " + expected)
+        }
+    }
+
 
 }
