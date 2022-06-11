@@ -122,11 +122,10 @@ export class assert {
         }
     }
 
-    static notEqual(actual, expected, message = DEFAULT_MESSAGE) {
-        if (expected === actual) {
-            throw new TestError(message + " - actual: " + actual + ", expected: " + expected)
+    static notEqual(actual, notExpected, message = DEFAULT_MESSAGE) {
+        if (notExpected === actual) {
+            throw new TestError(message + " - actual: " + actual + ", not expected: " + notExpected)
         }
     }
-
 
 }
