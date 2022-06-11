@@ -1,6 +1,6 @@
 {
   "name": "teevi",
-  "version": "2.1.10",
+  "version": "2.1.11",
   "description": "Allows unit testing of ES6 modules without additional dependencies right in your browser.",
   "keywords": [
     "test",
