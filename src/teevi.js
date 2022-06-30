@@ -41,7 +41,7 @@ it.only = function it(condition, testMethod) {
 }
 export {it}
 
-function run() {
+async function run() {
     for (const test of testStack) {
         if (test.describe) {
             const testHeadline = document.createElement("h2")
@@ -59,14 +59,7 @@ function run() {
             console.log("- " + test.it)
             testList.innerHTML += test.it
             try {
-                const paramNames = getParamNames(test.testMethod)
-                if(paramNames.length > 0 && paramNames[0] === "done") {
-                    // todo using "done()"
-                    test.testMethod(() => {
-                        console.log("done()")
-                    })
-                }
-                test.testMethod()
+                await test.testMethod()
             } catch (e) {
                 testList.innerHTML += " =&gt; <span style='color: #990000;'>fail</span>"
                 testList.innerHTML += "<pre style='color: #990000; background-color: #f2f2f2; padding: 5px'>" + e + "</pre>"
@@ -79,17 +72,6 @@ function run() {
             document.body.appendChild(testList)
         }
     }
-}
-
-const STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg
-const ARGUMENT_NAMES = /([^\s,]+)/g
-
-function getParamNames(func) {
-    const fnStr = func.toString().replace(STRIP_COMMENTS, '')
-    let result = fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(ARGUMENT_NAMES)
-    if (result === null)
-        result = []
-    return result
 }
 
 export class assert {
@@ -110,21 +92,15 @@ export class assert {
         }
     }
 
-    /** @deprecated */
-    static equals(actual, expected, message = DEFAULT_MESSAGE) {
-        console.warn("`assert.equals` is deprecated, use `assert.equal`")
-        this.equal(actual, expected, message)
-    }
-
     static equal(actual, expected, message = DEFAULT_MESSAGE) {
         if (expected !== actual) {
-            throw new TestError(message + " - actual: " + actual + ", expected: " + expected)
+            throw new TestError(message + ": actual: " + actual + ", expected: " + expected)
         }
     }
 
     static notEqual(actual, notExpected, message = DEFAULT_MESSAGE) {
         if (notExpected === actual) {
-            throw new TestError(message + " - actual: " + actual + ", not expected: " + notExpected)
+            throw new TestError(message + ": actual: " + actual + ", not expected: " + notExpected)
         }
     }
 
