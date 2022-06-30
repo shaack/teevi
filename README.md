@@ -57,7 +57,7 @@ Use `it.only(condition, testMethod)` to run only these tests in your test module
 - `assert.false(message = DEFAULT_MESSAGE)`
 - `equal(actual, expected, message = DEFAULT_MESSAGE)`
 - `notEqual(actual, notExpected, message = DEFAULT_MESSAGE)`
-- use `reject(message)` from an async `Promise` (see example above)
+- use `reject(message)` from an async `Promise` (see example below)
 
 ## Testing async calls
 
