@@ -1,10 +1,10 @@
 # Teevi
 
-Tired of installing 100 dependencies, just to run unit tests? Teevi is
+Tired of installing 1000 dependencies, just to run unit tests? Teevi is
 the essence of unit testing in JavaScript.
 
-It allows unit testing of JavaScript without additional dependencies, right in your browser.
-Besides, Teevi has almost the same syntax as Mocha with Chai but is a hundred times smaller.
+It allows unit testing of JS without additional dependencies, right in your browser.
+Teevi has almost the same syntax as Mocha with Chai but is a hundred times smaller.
 
 Demo: [http://shaack.com/projekte/teevi/test/](http://shaack.com/projekte/teevi/test/)
 
@@ -48,5 +48,36 @@ describe("Teevi test demo", () => {
 
 ## it.only
 
-Use `it.only(condition, testMethod)` to run only these tests in your test module. 
+Use `it.only(condition, testMethod)` to run only these tests in your test module.
 
+## possible assertions
+
+- `assert.fail(message = DEFAULT_MESSAGE)`
+- `assert.true(message = DEFAULT_MESSAGE)`
+- `assert.false(message = DEFAULT_MESSAGE)`
+- `equal(actual, expected, message = DEFAULT_MESSAGE)`
+- `notEqual(actual, notExpected, message = DEFAULT_MESSAGE)`
+- use `reject(message)` from an async `Promise` (see example above)
+
+## Testing async calls
+
+You can also test async calls, with the use of promises.
+
+```javascript
+it("should test async", () => {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            // `resolve`, if test succeeds
+            resolve()
+        }, 500)
+    })
+})
+it("should fail async", () => {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            // in Promises use `reject()`, not `assert`
+            reject("failed, because of testing")
+        }, 500)
+    })
+})
+```

@@ -16,7 +16,7 @@ describe("Teevi test demo", () => {
     it("should test async", () => {
         return new Promise((resolve) => {
             setTimeout(() => {
-                assert.true(true)
+                // `resolve`, if test succeeds
                 resolve()
             }, 500)
         })
@@ -24,7 +24,7 @@ describe("Teevi test demo", () => {
     it("should fail async", () => {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
-                assert.true(true)
+                // in Promises use `reject()`, not `assert`
                 reject("failed, because of testing")
             }, 500)
         })
