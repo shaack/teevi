@@ -94,13 +94,13 @@ export class assert {
 
     static equal(actual, expected, message = DEFAULT_MESSAGE) {
         if (expected !== actual) {
-            throw new TestError(message + ": actual: " + actual + ", expected: " + expected)
+            throw new TestError(message + "\nactual:\n" + actual + "\nexpected:\n" + expected)
         }
     }
 
     static notEqual(actual, notExpected, message = DEFAULT_MESSAGE) {
         if (notExpected === actual) {
-            throw new TestError(message + ": actual: " + actual + ", not expected: " + notExpected)
+            throw new TestError(message + "\nactual:\n" + actual + "\nnot expected:\n" + notExpected)
         }
     }
 
