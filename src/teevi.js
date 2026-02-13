@@ -104,4 +104,13 @@ export class assert {
         }
     }
 
+    static throws(fn, message = DEFAULT_MESSAGE) {
+        try {
+            fn()
+        } catch (e) {
+            return
+        }
+        throw new TestError(message)
+    }
+
 }

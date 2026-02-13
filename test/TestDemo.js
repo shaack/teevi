@@ -21,6 +21,16 @@ describe("Teevi test demo", () => {
             }, 500)
         })
     })
+    it("should detect a thrown error", () => {
+        assert.throws(() => {
+            throw new Error("this is an error")
+        }, "should have thrown an error")
+    })
+    it("should fail when no error is thrown", () => {
+        assert.throws(() => {
+            // does not throw
+        }, "should have thrown an error")
+    })
     it("should fail async", () => {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
