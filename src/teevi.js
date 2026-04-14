@@ -42,6 +42,8 @@ it.only = function it(condition, testMethod) {
 export {it}
 
 async function run() {
+    let passed = 0
+    let failed = 0
     for (const test of testStack) {
         if (test.describe) {
             const testHeadline = document.createElement("h2")
@@ -53,7 +55,7 @@ async function run() {
             if (onlyMode && !test.only) {
                 continue
             }
-            let failed = false
+            let testFailed = false
             const testList = document.createElement("div")
             testList.setAttribute("style", STYLE)
             console.log("- " + test.it)
@@ -61,17 +63,33 @@ async function run() {
             try {
                 await test.testMethod()
             } catch (e) {
-                testList.innerHTML += " =&gt; <span style='color: #990000;'>fail</span>"
+                testList.innerHTML += " → <span style='color: #990000;'>fail</span>"
                 testList.innerHTML += "<pre style='color: #990000; background-color: #f2f2f2; padding: 5px'>" + e + "</pre>"
                 console.error(e)
-                failed = true
+                testFailed = true
             }
-            if (!failed) {
-                testList.innerHTML += " =&gt; <span style='color: #009900;'>ok</span>"
+            if (!testFailed) {
+                testList.innerHTML += " → <span style='color: #009900;'>ok</span>"
+                passed++
+            } else {
+                failed++
             }
             document.body.appendChild(testList)
+            window.scrollTo(0, document.body.scrollHeight)
         }
     }
+    const total = passed + failed
+    const summary = document.createElement("div")
+    const color = failed > 0 ? "#990000" : "#009900"
+    summary.setAttribute("style",
+        STYLE + ";margin-top:1.5rem;padding:0.75rem 0;" +
+        "border-top:1px solid " + color + ";color:" + color)
+    summary.innerText = failed > 0
+        ? total + " tests, " + passed + " passed, " + failed + " failed"
+        : "All " + total + " tests passed"
+    document.body.appendChild(summary)
+    window.scrollTo(0, document.body.scrollHeight)
+    console.log(summary.innerText)
 }
 
 export class assert {
