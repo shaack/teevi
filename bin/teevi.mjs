@@ -112,7 +112,7 @@ try {
     const errors = []
     const consoleErrors = []
     page.on("pageerror", (e) => errors.push("pageerror: " + e.message))
-    const isNoise = (url) => url.endsWith("/favicon.ico")
+    const isNoise = (url) => url.endsWith("/favicon.ico") || url.startsWith("blob:")
     page.on("requestfailed", (r) => {
         if (!isNoise(r.url())) errors.push("request failed: " + r.url() + " " + (r.failure()?.errorText || ""))
     })
