@@ -20,7 +20,7 @@ class TestError extends Error {
 
 export class teevi {
     /**
-     * Runs all queued tests. Resolves with {total, passed, failed} when done.
+     * Runs all queued tests. Resolves with {total, passed, failed, skipped} when done.
      * @param {Object} [options]
      * @param {number} [options.timeout=0] fail a test that takes longer than this many ms, 0 disables the timeout
      */
@@ -45,11 +45,14 @@ export function describe(object, tests) {
 
 let onlyMode = false
 const it = function it(condition, testMethod) {
-    testStack.push({it: condition, testMethod: testMethod, only: false})
+    testStack.push({it: condition, testMethod: testMethod, only: false, skip: false})
 }
 it.only = function it(condition, testMethod) {
-    testStack.push({it: condition, testMethod: testMethod, only: true})
+    testStack.push({it: condition, testMethod: testMethod, only: true, skip: false})
     onlyMode = true
+}
+it.skip = function it(condition, testMethod) {
+    testStack.push({it: condition, testMethod: testMethod, only: false, skip: true})
 }
 export {it}
 
@@ -67,6 +70,7 @@ function withTimeout(result, timeout) {
 async function run({timeout = 0} = {}) {
     let passed = 0
     let failed = 0
+    let skipped = 0
     for (const test of testStack) {
         if (test.describe) {
             const testHeadline = document.createElement("h2")
@@ -79,11 +83,21 @@ async function run({timeout = 0} = {}) {
             if (onlyMode && !test.only) {
                 continue
             }
-            console.log("- " + test.it)
             const testLine = document.createElement("div")
             testLine.setAttribute("style", STYLE)
             testLine.appendChild(document.createTextNode(test.it + " → "))
             const result = document.createElement("span")
+            if (test.skip) {
+                console.log("- " + test.it + " (skipped)")
+                testLine.className = "teevi-test teevi-skip"
+                result.setAttribute("style", "color: #999999")
+                result.textContent = "skipped"
+                testLine.appendChild(result)
+                document.body.appendChild(testLine)
+                skipped++
+                continue
+            }
+            console.log("- " + test.it)
             try {
                 await withTimeout(test.testMethod(), timeout)
                 testLine.className = "teevi-test teevi-pass"
@@ -115,16 +129,20 @@ async function run({timeout = 0} = {}) {
     summary.dataset.total = String(total)
     summary.dataset.passed = String(passed)
     summary.dataset.failed = String(failed)
+    summary.dataset.skipped = String(skipped)
     summary.setAttribute("style",
         STYLE + ";margin-top:1.5rem;padding:0.75rem 0;" +
         "border-top:1px solid " + color + ";color:" + color)
     summary.textContent = failed > 0
         ? total + " tests, " + passed + " passed, " + failed + " failed"
         : "All " + total + " tests passed"
+    if (skipped > 0) {
+        summary.textContent += ", " + skipped + " skipped"
+    }
     document.body.appendChild(summary)
     window.scrollTo(0, document.body.scrollHeight)
     console.log(summary.textContent)
-    return {total, passed, failed}
+    return {total, passed, failed, skipped}
 }
 
 // objects and arrays would otherwise show up as [object Object] in failure messages
@@ -172,6 +190,16 @@ export class assert {
     static throws(fn, message = DEFAULT_MESSAGE) {
         try {
             fn()
+        } catch (e) {
+            return
+        }
+        throw new TestError(message)
+    }
+
+    // async counterpart of throws(), must be awaited or returned from the test
+    static async rejects(promiseOrFn, message = DEFAULT_MESSAGE) {
+        try {
+            await (typeof promiseOrFn === "function" ? promiseOrFn() : promiseOrFn)
         } catch (e) {
             return
         }

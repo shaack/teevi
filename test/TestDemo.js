@@ -39,6 +39,18 @@ describe("Teevi test demo", () => {
             // never resolves, fails because of the timeout passed to teevi.run()
         })
     })
+    it.skip("should be skipped", () => {
+        assert.fail("never runs")
+    })
+    it("should detect a rejected promise", async () => {
+        await assert.rejects(Promise.reject(new Error("rejected")))
+        await assert.rejects(async () => {
+            throw new Error("rejected")
+        })
+    })
+    it("should fail when the promise does not reject", () => {
+        return assert.rejects(Promise.resolve("fine"), "should have rejected")
+    })
     it("should fail async", () => {
         return new Promise((resolve, reject) => {
             setTimeout(() => {

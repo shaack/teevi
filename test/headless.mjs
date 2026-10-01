@@ -53,7 +53,7 @@ function loadPuppeteer() {
 const MIME = {
     ".html": "text/html", ".js": "text/javascript", ".mjs": "text/javascript",
     ".css": "text/css", ".svg": "image/svg+xml", ".json": "application/json",
-    ".png": "image/png", ".map": "application/json"
+    ".png": "image/png", ".ico": "image/x-icon", ".map": "application/json"
 }
 
 // ES modules do not load from file://, so serve the project over http.
