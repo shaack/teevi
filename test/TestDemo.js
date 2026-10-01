@@ -31,6 +31,14 @@ describe("Teevi test demo", () => {
             // does not throw
         }, "should have thrown an error")
     })
+    it("should render <b>HTML</b> in test names & messages as text", () => {
+        assert.fail("this <i>tag</i> must be shown literally")
+    })
+    it("should fail by timeout", () => {
+        return new Promise(() => {
+            // never resolves, fails because of the timeout passed to teevi.run()
+        })
+    })
     it("should fail async", () => {
         return new Promise((resolve, reject) => {
             setTimeout(() => {

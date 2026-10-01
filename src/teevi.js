@@ -19,8 +19,13 @@ class TestError extends Error {
 }
 
 export class teevi {
-    static run() {
-        run()
+    /**
+     * Runs all queued tests. Resolves with {total, passed, failed} when done.
+     * @param {Object} [options]
+     * @param {number} [options.timeout=0] fail a test that takes longer than this many ms, 0 disables the timeout
+     */
+    static run(options = {}) {
+        return run(options)
     }
 }
 
@@ -41,55 +46,78 @@ it.only = function it(condition, testMethod) {
 }
 export {it}
 
-async function run() {
+function withTimeout(result, timeout) {
+    if (!timeout) {
+        return result
+    }
+    let timer
+    const timeoutPromise = new Promise((resolve, reject) => {
+        timer = setTimeout(() => reject(new TestError("timeout after " + timeout + "ms")), timeout)
+    })
+    return Promise.race([result, timeoutPromise]).finally(() => clearTimeout(timer))
+}
+
+async function run({timeout = 0} = {}) {
     let passed = 0
     let failed = 0
     for (const test of testStack) {
         if (test.describe) {
             const testHeadline = document.createElement("h2")
+            testHeadline.className = "teevi-describe"
             testHeadline.setAttribute("style", STYLE)
-            testHeadline.innerText = test.describe
+            testHeadline.textContent = test.describe
             document.body.appendChild(testHeadline)
             console.log(test.describe + ":")
         } else if (test.it) {
             if (onlyMode && !test.only) {
                 continue
             }
-            let testFailed = false
-            const testList = document.createElement("div")
-            testList.setAttribute("style", STYLE)
             console.log("- " + test.it)
-            testList.innerHTML += test.it
+            const testLine = document.createElement("div")
+            testLine.setAttribute("style", STYLE)
+            testLine.appendChild(document.createTextNode(test.it + " → "))
+            const result = document.createElement("span")
             try {
-                await test.testMethod()
-            } catch (e) {
-                testList.innerHTML += " → <span style='color: #990000;'>fail</span>"
-                testList.innerHTML += "<pre style='color: #990000; background-color: #f2f2f2; padding: 5px'>" + e + "</pre>"
-                console.error(e)
-                testFailed = true
-            }
-            if (!testFailed) {
-                testList.innerHTML += " → <span style='color: #009900;'>ok</span>"
+                await withTimeout(test.testMethod(), timeout)
+                testLine.className = "teevi-test teevi-pass"
+                result.setAttribute("style", "color: #009900")
+                result.textContent = "ok"
+                testLine.appendChild(result)
                 passed++
-            } else {
+            } catch (e) {
+                testLine.className = "teevi-test teevi-fail"
+                result.setAttribute("style", "color: #990000")
+                result.textContent = "fail"
+                testLine.appendChild(result)
+                const details = document.createElement("pre")
+                details.setAttribute("style", "color: #990000; background-color: #f2f2f2; padding: 5px")
+                details.textContent = String(e)
+                testLine.appendChild(details)
+                console.error(e)
                 failed++
             }
-            document.body.appendChild(testList)
+            document.body.appendChild(testLine)
             window.scrollTo(0, document.body.scrollHeight)
         }
     }
     const total = passed + failed
     const summary = document.createElement("div")
     const color = failed > 0 ? "#990000" : "#009900"
+    summary.id = "teevi-summary"
+    summary.className = failed > 0 ? "teevi-fail" : "teevi-pass"
+    summary.dataset.total = String(total)
+    summary.dataset.passed = String(passed)
+    summary.dataset.failed = String(failed)
     summary.setAttribute("style",
         STYLE + ";margin-top:1.5rem;padding:0.75rem 0;" +
         "border-top:1px solid " + color + ";color:" + color)
-    summary.innerText = failed > 0
+    summary.textContent = failed > 0
         ? total + " tests, " + passed + " passed, " + failed + " failed"
         : "All " + total + " tests passed"
     document.body.appendChild(summary)
     window.scrollTo(0, document.body.scrollHeight)
-    console.log(summary.innerText)
+    console.log(summary.textContent)
+    return {total, passed, failed}
 }
 
 export class assert {
