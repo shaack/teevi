@@ -1,6 +1,6 @@
 {
   "name": "teevi",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "description": "Allows unit testing of ES6 modules without additional dependencies right in your browser.",
   "type": "module",
   "keywords": [
@@ -11,6 +11,10 @@
     "ECMAScript 6"
   ],
   "main": "src/teevi.js",
+  "exports": {
+    ".": "./src/teevi.js",
+    "./src/*": "./src/*"
+  },
   "directories": {
     "test": "test"
   },
@@ -20,12 +24,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/shaack/svjs-test.git"
+    "url": "git+https://github.com/shaack/teevi.git"
   },
   "author": "Stefan Haack (http://shaack.com)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/shaack/svjs-test/issues"
+    "url": "https://github.com/shaack/teevi/issues"
   },
-  "homepage": "https://github.com/shaack/svjs-test#readme"
+  "homepage": "https://github.com/shaack/teevi#readme"
 }

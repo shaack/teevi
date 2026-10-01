@@ -1,6 +1,6 @@
 # Teevi
 
-Tired of installing 1000 dependencies, just to run unit tests? Teevi is the essence of unit testing in JavaScript.
+Tired of installing hundreds of dependencies just to run unit tests? Teevi is the essence of unit testing in JavaScript.
 
 It allows unit testing of ES6 modules without additional dependencies, right in your browser. Teevi has almost the same syntax as Mocha with Chai but is a hundred times smaller. The whole framework is one file, `src/teevi.js`, with about 160 lines of plain ES6.
 
@@ -21,6 +21,8 @@ Via npm:
 ```bash
 npm install --save-dev teevi
 ```
+
+In the browser, import it by path, for example `../node_modules/teevi/src/teevi.js`. Bundlers and Node resolve the bare specifier `teevi` through the `exports` field in `package.json`.
 
 Or just copy `src/teevi.js` into your project. It is a single file without imports.
 
@@ -78,7 +80,7 @@ When all tests are done, Teevi appends a summary line to the page, green "All N 
 
 ### teevi.run(options)
 
-Runs all queued tests and returns a Promise that resolves with `{total, passed, failed}` when the last test is done.
+Runs all queued tests and returns a Promise that resolves with `{total, passed, failed}` when the last test is done. Calling it a second time logs a warning and returns the Promise of the first run instead of running everything twice.
 
 | Option | Default | Meaning |
 |---|---|---|
@@ -134,7 +136,7 @@ All comparisons are strict (`===` and `!==`). The `message` parameter is optiona
 | `assert.notEqual(actual, notExpected, message)` | `actual !== notExpected` |
 | `assert.throws(fn, message)` | calling `fn()` throws |
 
-`assert.equal()` and `assert.notEqual()` print both values in the failure output, so you see what went wrong without adding a message.
+`assert.equal()` and `assert.notEqual()` print both values in the failure output, so you see what went wrong without adding a message. Objects and arrays are printed as JSON, not as `[object Object]`.
 
 ```javascript
 it("should compare values", () => {
@@ -238,7 +240,7 @@ The runner
 1. starts a tiny static http server on a free port, serving your project root, because ES6 modules do not load from `file://`
 2. resolves puppeteer from the global npm root (or from the project, if it is installed there) and launches headless Chrome
 3. opens `test/index.html` and waits for the element `#teevi-summary` that `teevi.run()` appends when all tests are done
-4. prints the summary and the failed tests to the console and exits with code 0 when all tests passed, code 1 when a test failed, and code 2 when puppeteer was not found
+4. prints the summary and the failed tests to the console and exits with code 0 when all tests passed, code 1 when a test failed, and code 2 when puppeteer or its Chrome is not available
 
 Example output:
 
@@ -251,7 +253,27 @@ Example output:
   FAIL: should fail async → fail failed, because of testing
 ```
 
-The only thing to adapt in `headless.mjs` is the constant `TEST_PAGE`, in case your test page is not `test/index.html`. Uncaught errors on the page are printed as `pageerror`, which helps when a test file does not even load. Pass a `timeout` to `teevi.run()` in your test page, otherwise a hanging test only shows up as a timeout of the runner itself, without the name of the test.
+The runner takes two environment variables:
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `TEEVI_TEST_PAGE` | `/test/index.html` | path of the test page, relative to the project root |
+| `TEEVI_TIMEOUT` | `30000` | milliseconds to wait for the page to load and for the summary to appear |
+
+```bash
+TEEVI_TEST_PAGE=/test/other.html TEEVI_TIMEOUT=60000 npm run test:headless
+```
+
+When the summary does not appear in time, for example because a test module has a syntax error, an import returns 404 or a test never resolves, the runner prints what it collected on the page, uncaught errors, failed requests and console errors, and exits with code 1:
+
+```
+No test summary after 30000ms. The test page did not load, or a test never finished.
+Hint: pass a timeout to teevi.run({timeout}) to make hanging tests fail with their name.
+  HTTP 404: http://127.0.0.1:54313/test/DoesNotExist.js
+  request failed: http://127.0.0.1:54313/test/DoesNotExist.js net::ERR_ABORTED
+```
+
+If puppeteer is installed but its Chrome download is missing, the runner says so and points you to `npx puppeteer browsers install chrome`. Pass a `timeout` to `teevi.run()` in your test page, otherwise a hanging test only shows up as a timeout of the runner itself, without the name of the test.
 
 ### DOM markers for your own tooling
 
@@ -294,6 +316,7 @@ Teevi tests itself with `test/TestDemo.js`. Open [`test/index.html`](test/index.
 
 ## Changelog
 
+- **2.5.1** Headless runner reports page errors, failed requests and console errors when the test page never finishes, and exits with code 2 when Chrome is missing. `TEEVI_TEST_PAGE` and `TEEVI_TIMEOUT`. A second `teevi.run()` call is ignored with a warning. `assert.equal()` and `assert.notEqual()` print objects and arrays as JSON. `exports` field and corrected repository links in `package.json`.
 - **2.5.0** `teevi.run()` returns `{total, passed, failed}` and accepts `{timeout}`. Test names and error messages are rendered as text, HTML in them is no longer interpreted. Results carry CSS classes and the summary has the id `teevi-summary` with data attributes, for headless runners. New optional headless runner `test/headless.mjs`.
 - **2.4.0** Summary line at the end of the run, auto-scroll while tests stream in.
 

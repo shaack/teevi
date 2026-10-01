@@ -12,8 +12,12 @@
  *     npm install -g puppeteer
  *     npm run test:headless
  *
- * Copy this file into your own project to run your Teevi tests in CI. The only
- * thing to adapt is TEST_PAGE, in case your test page is not test/index.html.
+ * Copy this file into your own project to run your Teevi tests in CI.
+ * Environment variables: TEEVI_TEST_PAGE (default /test/index.html) and
+ * TEEVI_TIMEOUT in ms (default 30000) for page load and test run.
+ *
+ * Exit codes: 0 all tests passed, 1 a test failed, 2 puppeteer or its Chrome
+ * is not available.
  */
 
 import {createServer} from "http"
@@ -23,8 +27,8 @@ import {readFile} from "fs/promises"
 import {fileURLToPath} from "url"
 import {dirname, join, normalize, extname} from "path"
 
-const TEST_PAGE = "/test/index.html"
-const TIMEOUT = 30000
+const TEST_PAGE = process.env.TEEVI_TEST_PAGE || "/test/index.html"
+const TIMEOUT = Number(process.env.TEEVI_TIMEOUT) || 30000
 
 const projectRoot = normalize(join(dirname(fileURLToPath(import.meta.url)), ".."))
 
@@ -78,25 +82,56 @@ const puppeteer = loadPuppeteer()
 const {server, port} = await startServer()
 const url = `http://127.0.0.1:${port}${TEST_PAGE}`
 
+let browser
+try {
+    browser = await puppeteer.launch({headless: true})
+} catch (e) {
+    console.error(
+        "\nCould not launch headless Chrome: " + e.message.split("\n")[0] + "\n" +
+        "Puppeteer is installed, but its browser is missing or broken. Download it with:\n" +
+        "    npx puppeteer browsers install chrome\n")
+    server.close()
+    process.exit(2)
+}
+
 let exitCode = 1
-const browser = await puppeteer.launch({headless: true})
 try {
     const page = await browser.newPage()
+    // page errors and failed requests explain why a test page did not even start
     const errors = []
-    page.on("pageerror", (e) => errors.push(e.message))
+    const consoleErrors = []
+    page.on("pageerror", (e) => errors.push("pageerror: " + e.message))
+    const isNoise = (url) => url.endsWith("/favicon.ico")
+    page.on("requestfailed", (r) => {
+        if (!isNoise(r.url())) errors.push("request failed: " + r.url() + " " + (r.failure()?.errorText || ""))
+    })
+    page.on("response", (r) => {
+        if (r.status() >= 400 && !isNoise(r.url())) errors.push("HTTP " + r.status() + ": " + r.url())
+    })
+    page.on("console", (m) => {
+        if (m.type() === "error") consoleErrors.push("console.error: " + m.text())
+    })
     await page.goto(url, {waitUntil: "networkidle0", timeout: TIMEOUT})
     // teevi.run() appends #teevi-summary when all tests are done
-    await page.waitForSelector("#teevi-summary", {timeout: TIMEOUT})
-    const {summary, failed, fails} = await page.evaluate(() => {
-        const summary = document.getElementById("teevi-summary")
-        const fails = [...document.querySelectorAll(".teevi-test.teevi-fail")]
-            .map((line) => line.innerText.replace(/\s+/g, " ").trim().slice(0, 500))
-        return {summary: summary.innerText, failed: Number(summary.dataset.failed), fails}
-    })
-    console.log(summary)
-    for (const fail of fails) console.log("  FAIL: " + fail)
-    for (const error of errors.slice(0, 10)) console.log("  pageerror: " + error)
-    exitCode = failed > 0 ? 1 : 0
+    const summaryFound = await page.waitForSelector("#teevi-summary", {timeout: TIMEOUT})
+        .then(() => true, () => false)
+    if (summaryFound) {
+        const {summary, failed, fails} = await page.evaluate(() => {
+            const summary = document.getElementById("teevi-summary")
+            const fails = [...document.querySelectorAll(".teevi-test.teevi-fail")]
+                .map((line) => line.innerText.replace(/\s+/g, " ").trim().slice(0, 500))
+            return {summary: summary.innerText, failed: Number(summary.dataset.failed), fails}
+        })
+        console.log(summary)
+        for (const fail of fails) console.log("  FAIL: " + fail)
+        for (const error of errors.slice(0, 10)) console.log("  " + error)
+        exitCode = failed > 0 ? 1 : 0
+    } else {
+        console.log("No test summary after " + TIMEOUT + "ms. The test page did not load, or a test never finished.")
+        console.log("Hint: pass a timeout to teevi.run({timeout}) to make hanging tests fail with their name.")
+        for (const error of [...errors, ...consoleErrors].slice(0, 20)) console.log("  " + error)
+        exitCode = 1
+    }
 } finally {
     await browser.close()
     server.close()

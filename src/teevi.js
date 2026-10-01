@@ -25,9 +25,16 @@ export class teevi {
      * @param {number} [options.timeout=0] fail a test that takes longer than this many ms, 0 disables the timeout
      */
     static run(options = {}) {
-        return run(options)
+        if (runPromise) {
+            console.warn("teevi.run() was already called, ignoring this call")
+            return runPromise
+        }
+        runPromise = run(options)
+        return runPromise
     }
 }
+
+let runPromise = null
 
 let testStack = []
 
@@ -120,6 +127,18 @@ async function run({timeout = 0} = {}) {
     return {total, passed, failed}
 }
 
+// objects and arrays would otherwise show up as [object Object] in failure messages
+function format(value) {
+    if (value !== null && typeof value === "object") {
+        try {
+            return JSON.stringify(value)
+        } catch (e) {
+            return String(value)
+        }
+    }
+    return String(value)
+}
+
 export class assert {
 
     static fail(message = DEFAULT_MESSAGE) {
@@ -133,20 +152,20 @@ export class assert {
     }
 
     static false(condition, message = DEFAULT_MESSAGE) {
-        if (!!condition) {
+        if (condition) {
             throw new TestError(message)
         }
     }
 
     static equal(actual, expected, message = DEFAULT_MESSAGE) {
         if (expected !== actual) {
-            throw new TestError(message + "\nactual:\n" + actual + "\nexpected:\n" + expected)
+            throw new TestError(message + "\nactual:\n" + format(actual) + "\nexpected:\n" + format(expected))
         }
     }
 
     static notEqual(actual, notExpected, message = DEFAULT_MESSAGE) {
         if (notExpected === actual) {
-            throw new TestError(message + "\nactual:\n" + actual + "\nnot expected:\n" + notExpected)
+            throw new TestError(message + "\nactual:\n" + format(actual) + "\nnot expected:\n" + format(notExpected))
         }
     }
 
