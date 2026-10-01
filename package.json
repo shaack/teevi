@@ -1,6 +1,6 @@
 {
   "name": "teevi",
-  "version": "2.6.0",
+  "version": "2.7.0",
   "description": "Allows unit testing of ES6 modules without additional dependencies right in your browser.",
   "type": "module",
   "keywords": [
@@ -15,12 +15,20 @@
     ".": "./src/teevi.js",
     "./src/*": "./src/*"
   },
+  "bin": {
+    "teevi": "bin/teevi.mjs"
+  },
+  "files": [
+    "src",
+    "bin",
+    "README.md",
+    "LICENSE"
+  ],
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "tput setaf 1;echo 'Open test/index.html in your browser for unit testing, or run `npm run test:headless` (needs a global puppeteer).'; echo ''; exit 1",
-    "test:headless": "node test/headless.mjs"
+    "test": "node bin/teevi.mjs"
   },
   "repository": {
     "type": "git",

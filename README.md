@@ -12,7 +12,7 @@ Demo: [http://shaack.com/projekte/teevi/test/](http://shaack.com/projekte/teevi/
 - **No build step.** Tests are plain ES6 modules that run as they are. No bundler, no transpiler, no config file.
 - **Runs in the browser.** Your code is tested in the environment it is written for, with a real DOM, real events and real timers.
 - **Familiar syntax.** `describe`, `it` and `assert` work like in Mocha and Chai, so there is nothing new to learn.
-- **Headless if you want.** The same tests run in headless Chrome for CI, see [Running tests headless](#running-tests-headless).
+- **Headless if you want.** `npm test` runs the same tests in headless Chrome, for CI or a pre-commit hook, see [Running tests headless](#running-tests-headless).
 
 ## Installation
 
@@ -231,36 +231,30 @@ describe("Chessboard", () => {
 
 ## Running tests headless
 
-The same `test/index.html` can run in headless Chrome, for example in CI or in a pre-commit hook. Teevi itself stays dependency-free, the headless runner is an optional script that uses [puppeteer](https://pptr.dev).
-
-To keep your project free of dependencies too, install puppeteer globally instead of adding it to `package.json`:
+The same `test/index.html` can run in headless Chrome, for example in CI or in a pre-commit hook. Teevi ships the runner as the command `teevi`. It needs [puppeteer](https://pptr.dev), which is not a dependency of Teevi, so both stay dependency-free. Install puppeteer globally instead of adding it to your `package.json`:
 
 ```bash
 npm install -g puppeteer
 ```
 
-Then copy [`test/headless.mjs`](test/headless.mjs) from this repository into your `test/` folder and add a script to your `package.json`:
+Then make `teevi` the test script of your project:
 
 ```json
 {
   "scripts": {
-    "test:headless": "node test/headless.mjs"
+    "test": "teevi"
   }
 }
 ```
 
-Run it with
-
-```bash
-npm run test:headless
-```
+Now `npm test` runs your suite headless and fails when a test fails. Without puppeteer it fails with a hint how to install it, so nothing is silently green.
 
 The runner
 
 1. starts a tiny static http server on a free port, serving your project root, because ES6 modules do not load from `file://`
 2. resolves puppeteer from the global npm root (or from the project, if it is installed there) and launches headless Chrome
 3. opens `test/index.html` and waits for the element `#teevi-summary` that `teevi.run()` appends when all tests are done
-4. prints the summary and the failed tests to the console and exits with code 0 when all tests passed, code 1 when a test failed, and code 2 when puppeteer or its Chrome is not available
+4. prints the summary and the failed tests to the console and exits with code 0 when all tests passed, code 1 when a test failed, and code 2 when the test page, puppeteer or its Chrome is not available
 
 Example output:
 
@@ -282,7 +276,7 @@ The runner takes two environment variables:
 | `TEEVI_TIMEOUT` | `30000` | milliseconds to wait for the page to load and for the summary to appear |
 
 ```bash
-TEEVI_TEST_PAGE=/test/other.html TEEVI_TIMEOUT=60000 npm run test:headless
+TEEVI_TEST_PAGE=/test/other.html TEEVI_TIMEOUT=60000 npm test
 ```
 
 When the summary does not appear in time, for example because a test module has a syntax error, an import returns 404 or a test never resolves, the runner prints what it collected on the page, uncaught errors, failed requests and console errors, and exits with code 1:
@@ -323,12 +317,12 @@ jobs:
           node-version: 22
       - run: npm ci
       - run: npm install -g puppeteer
-      - run: npm run test:headless
+      - run: npm test
 ```
 
 ## Running the Teevi tests
 
-Teevi tests itself with `test/TestDemo.js`. Open [`test/index.html`](test/index.html) in your browser, or run `npm run test:headless` with a global puppeteer. Six of the ten demo tests fail on purpose and one is skipped, to show how that looks.
+Teevi tests itself with `test/TestDemo.js`. Open [`test/index.html`](test/index.html) in your browser, or run `npm test` with a global puppeteer. Six of the ten demo tests fail on purpose and one is skipped, to show how that looks.
 
 ## Projects using Teevi
 
@@ -338,6 +332,7 @@ Teevi tests itself with `test/TestDemo.js`. Open [`test/index.html`](test/index.
 
 ## Changelog
 
+- **2.7.0** The headless runner is now the command `teevi`, installed with the package. Put `"test": "teevi"` into your `package.json` instead of copying `test/headless.mjs`. It serves the current working directory and complains when the test page is missing.
 - **2.6.0** `it.skip()` shows a test as skipped instead of running it. `assert.rejects()` as async counterpart of `assert.throws()`. The summary and the result of `teevi.run()` include the skipped count. Favicon for the test page.
 - **2.5.1** Headless runner reports page errors, failed requests and console errors when the test page never finishes, and exits with code 2 when Chrome is missing. `TEEVI_TEST_PAGE` and `TEEVI_TIMEOUT`. A second `teevi.run()` call is ignored with a warning. `assert.equal()` and `assert.notEqual()` print objects and arrays as JSON. `exports` field and corrected repository links in `package.json`.
 - **2.5.0** `teevi.run()` returns `{total, passed, failed}` and accepts `{timeout}`. Test names and error messages are rendered as text, HTML in them is no longer interpreted. Results carry CSS classes and the summary has the id `teevi-summary` with data attributes, for headless runners. New optional headless runner `test/headless.mjs`.

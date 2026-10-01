@@ -1,18 +1,20 @@
+#!/usr/bin/env node
 /**
  * Author and copyright: Stefan Haack (https://shaack.com)
  * Repository: https://github.com/shaack/teevi
  * License: MIT, see file 'LICENSE'
  *
- * Optional headless test runner. Serves the project over a tiny static server,
- * opens test/index.html in headless Chrome, prints the Teevi summary and exits
- * non-zero when a test failed.
+ * Headless test runner, installed as the `teevi` command. Serves the current
+ * working directory over a tiny static server, opens test/index.html in
+ * headless Chrome, prints the Teevi summary and exits non-zero when a test
+ * failed. Use it as the `test` script of your project:
+ *
+ *     "scripts": {"test": "teevi"}
  *
  * Puppeteer is intentionally NOT a dependency of Teevi. Install it globally:
  *
  *     npm install -g puppeteer
- *     npm run test:headless
  *
- * Copy this file into your own project to run your Teevi tests in CI.
  * Environment variables: TEEVI_TEST_PAGE (default /test/index.html) and
  * TEEVI_TIMEOUT in ms (default 30000) for page load and test run.
  *
@@ -23,14 +25,14 @@
 import {createServer} from "http"
 import {createRequire} from "module"
 import {execSync} from "child_process"
-import {readFile} from "fs/promises"
-import {fileURLToPath} from "url"
-import {dirname, join, normalize, extname} from "path"
+import {readFile, access} from "fs/promises"
+import {join, normalize, extname, resolve} from "path"
 
 const TEST_PAGE = process.env.TEEVI_TEST_PAGE || "/test/index.html"
 const TIMEOUT = Number(process.env.TEEVI_TIMEOUT) || 30000
 
-const projectRoot = normalize(join(dirname(fileURLToPath(import.meta.url)), ".."))
+// npm runs scripts with the package root as working directory
+const projectRoot = resolve(process.cwd())
 
 // Resolve puppeteer from the global npm root, or from the project if it is installed there.
 function loadPuppeteer() {
@@ -46,7 +48,7 @@ function loadPuppeteer() {
     console.error(
         "\nCould not find puppeteer. This headless runner needs it installed globally:\n" +
         "    npm install -g puppeteer\n" +
-        "Or just open test/index.html in a browser.\n")
+        "Or just open " + TEST_PAGE.replace(/^\//, "") + " in a browser.\n")
     process.exit(2)
 }
 
@@ -76,6 +78,15 @@ function startServer() {
     return new Promise((resolve) => {
         server.listen(0, "127.0.0.1", () => resolve({server, port: server.address().port}))
     })
+}
+
+try {
+    await access(join(projectRoot, TEST_PAGE))
+} catch {
+    console.error(
+        "\nNo test page at " + join(projectRoot, TEST_PAGE) + "\n" +
+        "Run teevi from your project root, or set TEEVI_TEST_PAGE to the path of your test page.\n")
+    process.exit(2)
 }
 
 const puppeteer = loadPuppeteer()
